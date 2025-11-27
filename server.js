@@ -42,6 +42,9 @@ app.use((err, req, res, next) => {
 });
 
 async function start() {
+  if (!JWT_SECRET) throw new Error('Missing JWT_SECRET');
+  if (!MONGO_URI) throw new Error('Missing MONGO_URI');
+
   await mongoose.connect(MONGO_URI);
   app.locals.db = mongoose.connection;
   const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
