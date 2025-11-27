@@ -2,10 +2,23 @@ const leaderboardService = require('../services/leaderboardService');
 
 async function adjust(req, res) {
   try {
-    const { success } = req.body;
-    const delta = success ? 1 : -1;
-    const entry = await leaderboardService.adjustScore(req.user._id, delta);
-    return res.json({ score: entry.score });
+    const { success, question } = req.body;
+    let entry = null;
+
+    if (success) {
+      if (typeof question === 'number') {
+        // Award point for the specific question only if progress matches
+        entry = await leaderboardService.awardPointForQuestion(req.user._id, question);
+      } else {
+        // Generic increment
+        entry = await leaderboardService.adjustScore(req.user._id, 1);
+      }
+    } else {
+      // Do not decrement on failure; just return existing entry
+      entry = await leaderboardService.getByUser(req.user._id);
+    }
+
+    return res.json({ score: entry ? entry.score : 0, progress: entry ? entry.progress : 0 });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server error' });
