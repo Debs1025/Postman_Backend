@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const userRoute = require('./routes/userRoute');
 const leaderboardRoute = require('./routes/leaderboardRoute');
 
-const { MONGO_URI, PORT = 4000, CORS_ORIGIN = 'http://localhost:4000', JWT_SECRET } = process.env;
+const { MONGO_URI, PORT = 4000, CORS_ORIGIN = 'http://localhost:3000', JWT_SECRET } = process.env;
 if (!JWT_SECRET) throw new Error('Missing JWT_SECRET');
 if (!MONGO_URI) throw new Error('Missing MONGO_URI');
 
@@ -16,6 +16,9 @@ const app = express();
 
 // health
 app.get('/api', (req, res) => res.json({ message: 'API running' }));
+
+// Redirect root to /api
+app.get('/', (req, res) => res.redirect('/api'));
 
 // Middlewares
 app.use(helmet());
