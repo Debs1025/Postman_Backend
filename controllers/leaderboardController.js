@@ -40,7 +40,7 @@ async function top(req, res) {
 async function me(req, res) {
   try {
     const entry = await leaderboardService.getByUser(req.user._id);
-    return res.json({ score: entry ? entry.score : 0 });
+    return res.json({ score: entry ? entry.score : 0, progress: entry ? entry.progress : 0 });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server error' });
